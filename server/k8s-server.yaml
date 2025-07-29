@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookreview-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookreview-server
+  template:
+    metadata:
+      labels:
+        app: bookreview-server
+    spec:
+      containers:
+        - name: server
+          image: masapath/book-review-server:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/bookreview
+            - name: SPRING_DATASOURCE_USERNAME
+              value: bookuser
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: bookpass
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookreview-server
+spec:
+  type: ClusterIP
+  selector:
+    app: bookreview-server
+  ports:
+    - port: 8080
+      targetPort: 8080
