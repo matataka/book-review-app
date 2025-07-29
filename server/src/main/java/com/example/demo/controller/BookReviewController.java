@@ -14,7 +14,10 @@ public class BookReviewController {
     private BookReviewRepository repository;
 
     @GetMapping
-    public List<BookReview> getAll() {
+    public List<BookReview> getAll(@RequestParam(value = "q", required = false) String q) {
+        if (q != null && !q.isBlank()) {
+            return repository.search(q);
+        }
         return repository.findAll();
     }
 
@@ -26,5 +29,15 @@ public class BookReviewController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         repository.deleteById(id);
+    }
+
+    @PutMapping("/{id}")
+    public BookReview update(@PathVariable Long id, @RequestBody BookReview review) {
+        return repository.findById(id).map(r -> {
+            r.setTitle(review.getTitle());
+            r.setReview(review.getReview());
+            // updatedAtはエンティティの@PreUpdateで自動更新
+            return repository.save(r);
+        }).orElseThrow();
     }
 }
