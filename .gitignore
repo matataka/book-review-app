@@ -1,3 +1,5 @@
+# K8S_README.md をGit管理対象外にする
+K8S_README.md
 # Logs
 logs
 *.log
